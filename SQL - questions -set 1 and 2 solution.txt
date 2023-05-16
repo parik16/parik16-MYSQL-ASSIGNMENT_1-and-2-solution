@@ -1,0 +1,750 @@
+                                               CITY TABLE
+
+
+1. select  * from city where COUNTRYCODE = 'USA' AND POPULATION > 100000;
+
+2. select NAME  from city where  POPULATION > 120000;
+
+3. select *  from city ;
+
+4. select *  from city where ID = 1661;
+
+5. select *  from city where COUNTRYCODE = 'JPN';
+
+6. select NAME from city where COUNTRYCODE = 'JPN';
+
+
+
+                                               STATION TABLE
+
+7.select city,state from station;
+8. select city,ID from station where ID%2=0 ORDER BY ID  ;
+9. select COUNT(city),COUNT(DISTINCT(city)),(COUNT(city)-COUNT(DISTINCT(city))) as differ_city from station ;
+10. select MAX(LENGTH(city)) as maximumlen_city,MIN(LENGTH(city)) as minimumlen_city from station;
+   select city,LENGTH(city) as len from station ORDER BY len;
+
+11.  SELECT DISTINCT CITY FROM station WHERE CITY LIKE 'A%' OR CITY LIKE 'E%' OR CITY LIKE 'I%' OR CITY LIKE 'O%' OR CITY LIKE 'U%';
+12.  SELECT DISTINCT CITY FROM station WHERE CITY LIKE '%e' OR CITY LIKE '%e' OR CITY LIKE '%i' OR CITY LIKE '%o' OR CITY LIKE '%u';
+13.  SELECT DISTINCT CITY FROM station WHERE CITY NOT LIKE  'a%' OR CITY NOT LIKE  'e%' OR CITY NOT LIKE  'i%' OR CITY NOT LIKE  'o%' OR CITY NOT LIKE  'u%';
+14.  SELECT DISTINCT CITY FROM station WHERE CITY NOT LIKE  '%a' OR CITY NOT LIKE  '%e' OR CITY NOT LIKE  '%i' OR CITY NOT LIKE  '%o' OR CITY NOT LIKE  '%u';
+
+15.SELECT DISTINCT CITY FROM station WHERE city LIKE 
+       ((CITY NOT LIKE  'a%' OR CITY NOT LIKE  'e%' OR CITY NOT LIKE  'i%' OR CITY NOT LIKE  'o%' OR CITY NOT LIKE  'u%') OR 
+         (CITY NOT LIKE  '%a' OR CITY NOT LIKE  '%e' OR CITY NOT LIKE  '%i' OR CITY NOT LIKE  '%o' OR CITY NOT LIKE  '%u'));
+
+16.SELECT DISTINCT CITY FROM station WHERE city LIKE 
+     ((CITY NOT LIKE  'a%' OR CITY NOT LIKE  'e%' OR CITY NOT LIKE  'i%' OR CITY NOT LIKE  'o%' OR CITY NOT LIKE  'u%') AND 
+     (CITY NOT LIKE  '%a' OR CITY NOT LIKE  '%e' OR CITY NOT LIKE  '%i' OR CITY NOT LIKE  '%o' OR CITY NOT LIKE  '%u'));
+
+17. select product_id from sales where sales_date between '2019-01-01' and '2019-03-31';
+
+          select product_id,product_name from product where product_id IN (1,2);
+
+18. select DISTINCT author_id  from view where author_id = viewer_id ORDER BY author_id ASC;
+ 19. select COUNT(delivery_id)  from  delivery;
+
+     select  (COUNT(delivery_id)/6)*100 AS immediate_percentage from  delivery where order_date = customer_pref_delivery_date ;
+
+20.  select ad_id,avg(case
+                when action = "Clicked" then 1
+                when action = "Viewed" then 0
+                else null
+            end) * 100 as ctr from ads group by ad_id order by ctr desc, ad_id asc;
+
+
+21. select   employee_id,COUNT(*)  over(partition by (team_id)   ) as team_size  from employee ORDER BY employee_id;
+
+22. select country_name, case 
+                         when avg(weather_state<=15) then 'cold'
+                         when avg(weather_state>=25) then 'hot'
+                         
+                         else 'warm' end as  weather_type from countries c  inner join weather w  on c.country_id = w.country_id 
+                         where day between '2019-11-01' AND '2019-11-30' GROUP BY country_name ; 
+
+23. select product_id, sum(avg_price)/SUM(units) from 
+     (select p.product_id,units,price*units as  avg_price from prices p left join unitssold u
+      on p.product_id=u.product_id and purchase_date between start_date and end_date)
+      as tmp group by product_id;
+
+24 select player_id,event_date from (select *, row_number() over(partition by player_id) as rn from activity) as tmp where rn<2 ;
+
+25. select player_id,device_id, from (select *, row_number() over( partition by player_id ) as rn from activity) as tmp where rn<2 ;
+
+
+26. select product_name,sum(unit) as SU from 
+    (select p.product_name,o.unit from products p  inner join orders o on p.product_id=o.product_id 
+    where order_date between '2020-02-01' AND '2020-02-28') as tmp
+      group by product_name HAVING SU>=100 ; 
+
+27.   select user_id,name,mail from users where mail like '%@leetcode.com' ;
+
+29.  select  DISTINCT(case  
+                  when  Kids_content = 'y'   then title end) as kids_friendly
+                                
+          from tvprogram t inner join content c on t.content_id=c.content_id 
+           where channel='disney ch' and date_format(program_date,'%Y-%M')=('2020-june');
+
+30. select q.id,q.year,IFNULL(npv,0)
+                    
+    
+    
+    from NPV n right join queries q on  q.id=n.id and q.year=n.year;
+
+31. select q.id,q.year,IFNULL(npv,0)
+                    
+    
+    
+    from NPV n right join queries q on  q.id=n.id and q.year=n.year;
+
+
+32.  select IFNULL(u.unique_id,'null'),name from employees e left join  employeeuni u on e.id=u.id;
+
+
+33.   select name,IFNULL(SUM(distance),0) as travelled from 
+         users u left  join rides r on u.id=r.user_id 
+       group by name  ORDER BY travelled  DESC, name ASC;
+
+34.  select SUM(unit),product_name from products p right join orders o 
+              on p.product_id=o.product_id
+             where date_format(order_date,'%Y-%M')=('2020-february') group by product_name 
+              having sum(unit)>=100;
+
+
+35.  select COUNT(m.movie_id),name as high 
+         from users u inner join movierating m on u.user_id=m.user_id 
+         inner join movies f on m.movie_id=f.movie_id group by m.user_id ;
+
+
+
+                   select AVG(rating) ,title
+                  from users u inner join movierating m on u.user_id=m.user_id 
+                  inner join movies f on m.movie_id=f.movie_id 
+                  where date_format(created_at, '%Y-%M')=('2020-FEBRUARY')  group by title;
+
+
+36.            select name,IFNULL(SUM(distance),0) as travelled from 
+         users u left  join rides r on u.id=r.user_id 
+       group by name  ORDER BY travelled  DESC, name ASC;
+
+
+37.                select IFNULL(u.unique_id,'null'),name from employees e left join  employeeuni u on e.id=u.id;
+
+
+38.    select name,id 
+              from (select IFNULL(d.name,0) as not_exist 
+               ,s.id,s.name    from 
+        departments d right join students s 
+        on d.id=s.department_id )       
+        as tmp where not_exist LIKE 0;
+
+
+39.   
+         select count(duration) as call_count,sum(duration) as total_duration
+                ,from_id as p1 ,to_id as p2 
+                 from calls where from_id<to_id group by from_id,to_id  ;
+
+
+40.            select product_id,SUM(pu)/sum(units) as avg_price from 
+                   (select p.product_id, price*units as pu ,units
+  
+                         from 
+                prices p left join unitssold u 
+                 on p.product_id=u.product_id 
+                where purchase_date between start_date and end_date) as tmp
+                        group by product_id;
+
+41.   select name,SUM(product_vol) from (select  name,p.product_id,product_name,units*length*width*height as product_vol from
+                 warehouse w cross join products p ON
+                w.product_id=p.product_id) as tmp group by name; 
+
+
+42   .  select diff from (select sale_date,
+            sold_num - lead(sold_num)over(partition by sale_date order by sale_date)  as diff from  
+               sales) as tmp  where diff IS NOT NULL ;
+
+
+43.          select round((select  count(player_id) from
+             (select player_id , event_date,
+             lead(event_date,1,0) over(partition by player_id) as LD
+                     from activity ) as t1
+                   where DATEDIFF(LD,event_date)=1 )   
+
+
+                                DIV
+    
+
+            (SELECT SUM(pd) FROM (select COUNT(player_id)  over(partition by player_id) as pd
+                  from activity group by player_id) AS T1),2);   
+
+
+44.                select name from employee
+               where id= (select managerId from employee
+                where department = (select  department
+                          from employee 
+                      group by department   having  count(id)<5));
+
+
+45.  select DISTINCT(dept_name),student_nmbr from (select dept_name,count(student_id) 
+               over(partition by d.dept_id) as student_nmbr
+               from student s right join department d ON
+                           s.dept_id=d.dept_id) as t  ;
+
+
+46.    select customer_id from(select customer_id,COUNT(product_key) 
+            over(partition by customer_id) all_prdct
+               from customer) as t1 where all_prdct =2 group by customer_id ;
+
+
+48.          select book_id,name from (select book_id,name,SUM(quant) as sq
+                 from
+           (select  b.book_id,name,
+           IFNULL(quantity,0) as quant,available_from,
+               IFNULL(dispatch_date,0) as dispatch
+
+                from books b left join orders o
+                     on b.book_id=o.book_id 
+                 where available_from <  DATE_SUB("2019-06-23", INTERVAL 1 MONTH) ) as t1
+                         group by book_id) as t2 where Sq< 10 ;
+
+
+
+49.                                 select student_id,
+                        min(c_id) as course_id ,MAX(grd) as GRADE from 
+
+
+                           (select student_id,grd,
+                  count(course_id) over (partition by student_id) as c_id from 
+                            (select student_id,course_id,
+                            MAX(grade) over(partition by student_id ) as grd 
+                           from enrollments) as t1) as t2 group by student_id,grd;
+
+
+50.  
+                                                          select player_id,group_id
+  
+        
+                                                         FROM 
+ 
+ 
+ (select player_id,group_id,
+ match_id,first_player,sumof_firstplayerscore,second_player,
+ SUM(second_score) 
+ over(partition by second_player)  as sumof_secondplayerscore
+ 
+ 
+ from 
+ 
+ (select 
+ match_id,second_player,second_score,first_player,player_id,group_id
+ ,SUM(first_score) over(partition by first_player)  as sumof_firstplayerscore
+ FROM
+ players p cross join matches m on p.player_id=m.first_player)
+ 
+  as t1  ORDER BY MATCH_ID ASC) as t2 
+
+  group by first_player
+  
+ ORDER BY
+ group_id ASC
+;
+  
+
+
+ 51.                         select  name,population,area from (select  name,area,population, case when area>3000000 then 'big'
+                          when population >25000000 then 'big'
+                           else 'small'
+                          end as country
+                             from world) as t1 where country='big';
+
+
+
+52.            select name from 
+                (select name,IFNULL(referee_id,0) as RE_ID from customer) as t where RE_ID!=2;
+
+
+53.  select name from customers
+                  where id NOT IN (select customerid  from orders);
+
+54 . select employee_id,team_size from(select employee_id,
+                              count(team_id)over(partition by team_id  ) as team_size
+                                from employee) as t1 ORDER BY employee_id ASC;
+
+
+56.              select player_id,device_id FROM
+                          (select player_id,device_id,row_number()over(partition by player_id) as d_id 
+                                           from activity order by player_id) as t1
+                                                       where d_id=1 order by player_id;
+
+
+57.     select customer_number
+
+               from
+ 
+                                 (select DISTINCT customer_number as customer_number ,
+                                                          count(order_number)over(partition by customer_number) as num_order
+                                                                       from orders ) as t1 where num_order = (select max(num_order) from  (select DISTINCT customer_number,
+                                                                                                     count(order_number)over(partition by customer_number) as num_order
+                                                                                                                     from orders) as t2 ); 
+
+
+58.  select seat_id from ( select seat_id,ifnull(rn,0) as rn from (select seat_id,free, lag(free)over(partition by free) as rn
+                     
+                                        
+                                                                       from cinema  order by seat_id) as t1) as t2 where rn=1;
+
+
+
+59.                                            select name from(select   group_concat(com_id) as com_id,sales_id,name
+
+                                                                                              from
+
+                                                  (select  s.sales_id as sales_id,IFNULL(com_id,0) as com_id,name from
+                                                                                 salesperson s left join orders o 
+                                                                                              on s.sales_id=o.sales_id ) as t1 group by sales_id) as t2 
+                                                                                                                       where com_id  
+                                                                                               NOT IN (3,1) ;
+
+
+60.select x,y,z, case
+                  when x>(y+z) then 'NO'
+                  when y>(x+z) then 'NO'
+                  when z>(x+y) then 'NO'
+                  else 'YES' end as triangle 
+                  from triangle;
+
+
+61.   
+
+                                                                           select case  when final_distance1<final_distance2 then final_distance1
+                                                                                           when final_distance1>final_distance2 then final_distance2
+                                                                                                                           end as short_distance from
+ 
+ 
+                                                                                           (select sqrt(d1) as final_distance1,sqrt(d2) as final_distance2 from 
+ 
+                                                                                       (select (power((0-x1),2)+power((0-y1),2)) as d1,(power((x3-x2),2)+power(y3-y2,2)) as d2 from point) 
+                                                                                                         where x1=-1 AND x2=0   AND x3=2 ) as t2;
+
+
+
+
+
+62.  select actor_id,director_id from 
+               (select actor_id,director_id,(cop+timestamp) as newc
+
+                                                       from 
+                                                      (select actor_id,director_id,timestamp,
+                                                                       LEAD(timestamp)over(partition by director_id) as cop
+                                                                                            from actordirector) as tb1) as tb2 where newc =3;
+
+
+63.  select product_name,year,price from  
+                              product p cross join sales s 
+                                       on p.product_id=s.product_id;
+
+
+
+
+
+64.                     SELECT round(avg(EXPY),2),project_id
+
+                                                    from 
+
+                                        (select  name,employee_id,project_id,
+                                                 avg(experience_years)over(partition by project_id) as EXPY
+
+                                                                   from
+
+                                                             (select e.employee_id,name,project_id,experience_years
+                                                                                              from project p cross join employee e
+                                                                                 on p.employee_id=e.employee_id) as tb1) as tb2 group by project_id;
+
+
+
+
+
+65.               select 
+                          DISTINCT seller_id,
+                                       sum(price)over(partition by seller_id) 
+                                            as MSP from sales ORDER BY MSP DESC limit 2;
+
+
+
+66.               select buyer_id
+                                      from
+ 
+                                       (select seller_id,buyer_id,p.product_id,product_name
+                                                                           from sales s cross join product p
+
+                                                                                     on s.product_id=p.product_id where seller_id =buyer_id) 
+                                                                                                                     as tb1 where product_id LIKE 1 
+
+
+
+
+67.
+
+
+select visited_on,sum,round(AVG,2) ,SUM
+from
+
+ (select visited_on,
+                      sum(finalamount)over(order by visited_on rows 6  preceding ) as SUM,
+                                           avg(finalamount)over(order by visited_on rows 6  preceding ) as AVG
+
+ from 
+ 
+(select visited_on,
+              sum(amount) as finalamount from customer group by visited_on ) as t1) as t2;
+
+
+
+
+
+
+
+
+
+
+68.select gender,day,score_points,
+                             sum(score_points)
+                                     over(partition by gender rows  4 preceding   ) as sum_scorepoint
+                                                                                      from (select * from scores) as t1 
+
+69.   select MAX(log_id),MIN(log_id) from (select log_id,(log_id-sn) as diff from (select log_id,
+                                                                   ROW_NUMBER()OVER() as sn from logs) as t1) as t2 group by diff;
+                                                                                                                                                 ;
+
+
+
+70  .    select subject_name,(atnd-rnk) as attended_exams from
+ 
+                                  (select subject_name,atnd,rank()over() as rnk from (select subject_name,
+                                                                     count(subject_name)
+
+                                                                           as atnd
+                                                                     from (select s.student_id,sub.subject_name
+                                                                                      from students s cross join subjects sub UNION ALL
+
+                                                                                                         select * from examinations ORDER BY student_id,subject_name)
+                                                                                                                       as t1 group by student_id,subject_name) as t2) as t3;
+
+
+
+
+71.    select employee_id from (select employee_id,manager_id,(ld-mlg) as mld ,mlg,ld,lg
+                                                                    from
+                                                                   (select employee_id,manager_id,(manager_id+lg) as mlg,ld,lg
+                                                                            from
+                                                                             (select employee_id,manager_id,IFNULL(ld,0) as ld,IFNULL(lg,0) as lg
+
+                                                                                                                                 from
+
+
+                                                           (select employee_id,manager_id,lead(manager_id)over(order by manager_id) as ld,
+                                                                                                               lag(manager_id)over(order by manager_id) as lg
+
+                                                                                                                      from
+
+                                                                                        (select employee_id,manager_id  from employee 
+                                                                                                where employee_id!=manager_id   order by manager_id) as t1) as t2) as t3) as t4) as t5
+                                                                                                                                   where mld BETWEEN 0 AND 1;
+
+
+
+
+
+72.   select date_format(trans_date,"%Y-%m") as month, country, 
+    count(id) as trans_count,
+    sum(case when state='approved' then 1  else 0 end) as approved_count,
+    sum(amount) as trans_total_amount,
+    sum(case when state='approved' then amount  else 0 end) as approved_total_amount
+from transactions
+group by month, country
+
+
+
+
+73.    select round(avg(daily_count), 2) as average_daily_percent
+from (select count(distinct b.post_id)/count(distinct a.post_id)*100 as daily_count
+    from actions a
+    left join removals b
+    on a.post_id = b.post_id
+    where extra = 'spam'
+    group by action_date
+    ) b
+
+
+
+74.    WITH CTE AS (
+SELECT
+player_id, min(event_date) as event_start_date
+from
+Activity
+group by player_id )
+
+SELECT
+round((count(distinct c.player_id) / (select count(distinct player_id) from activity)),2)as fraction
+FROM
+CTE c
+JOIN Activity a
+on c.player_id = a.player_id
+and datediff(c.event_start_date, a.event_date) = -1
+
+
+
+76.   select company_id, employee_id, employee_name, round(salary - salary*tax, 0) as salary
+from
+(
+  select *,
+  case when max(salary) over(partition by company_id) < 1000 then 0
+       when max(salary) over(partition by company_id) between 1000
+       and 10000 then 0.24
+       else 0.49 end as tax
+  from Salaries
+) x 
+
+
+77.  select e.left_operand, e.operator, e.right_operand,
+    case
+        when e.operator = '<' then if(l.value < r.value,'true','false')
+        when e.operator = '>' then if(l.value > r.value,'true','false')
+        else if(l.value = r.value,'true','false')
+    end as value
+from expressions e 
+left join variables l on e.left_operand = l.name 
+left join variables r on e.right_operand = r.name
+
+
+
+
+78.   select c.name as country 
+from Person p 
+inner join Country c 
+on left (p.phone_number,3) = c.country_code 
+inner join (select caller_id as id, duration 
+            from Calls 
+            
+            union all 
+            
+            select callee_id as id, duration 
+            from Calls) phn 
+on p.id = phn.id 
+group by country 
+having avg(duration) > (select avg(duration) from Calls)
+
+
+
+79.  SELECT NAME FROM EMPLOYEE ORDER BY NAME;
+
+
+82.      with cte as (SELECT user_id, EXTRACT(month from event_date) as m_num
+             from user_actions
+             where EXTRACT(month from event_date) in (6,7))
+
+select m_num as month, count(*) as monthly_active_users
+from (SELECT user_id, m_num, RANK() over(PARTITION BY user_id order by m_num)
+      from cte
+      GROUP BY user_id, m_num)m
+where rank = 2
+GROUP BY month;
+
+
+
+
+
+83.     WITH searches_expanded AS (
+  SELECT searches
+  FROM search_frequency
+  GROUP BY 
+    searches, 
+    GENERATE_SERIES(1, num_users))
+
+SELECT 
+  ROUND(PERCENTILE_CONT(0.50) WITHIN GROUP (
+    ORDER BY searches)::DECIMAL, 1) AS  median
+FROM searches_expanded;
+
+
+
+
+
+
+84.     WITH payment_status AS (
+SELECT
+  advertiser.user_id,
+  advertiser.status,
+  payment.paid
+FROM advertiser
+LEFT JOIN daily_pay AS payment
+  ON advertiser.user_id = payment.user_id
+
+UNION
+
+SELECT
+  payment.user_id,
+  advertiser.status,
+  payment.paid
+FROM daily_pay AS payment
+LEFT JOIN advertiser
+  ON advertiser.user_id = payment.user_id
+)
+
+
+
+
+87.    with totorders as(
+select o.order_id, o.customer_id, o.trip_id,o.status, o.order_timestamp,
+t.estimated_delivery_timestamp as etimestamp, t.actual_delivery_timestamp as atimestamp,
+c.signup_timestamp
+from orders as o
+join trips as t on t.trip_id = o.trip_id
+join customers as c on c.customer_id = o.customer_id
+where extract(month from c.signup_timestamp) = 06
+AND extract(year from c.signup_timestamp) = 2022
+and c.signup_timestamp+interval '14 days' > o.order_timestamp
+),
+badorders as(
+select *
+from totorders
+where not status = 'completed successfully' or
+atimestamp>etimestamp or
+atimestamp is null
+)
+select round(100.0*count(order_id)/(select count(order_id)from totorders),2) as bad_experience_pct
+from badorders
+
+
+
+
+
+
+88.    select s.gender, s.day, (select sum(score_points) from Scores where gender = s.gender and day <= s.day) as total
+    from Scores s
+    group by gender, day
+    order by gender, day;
+
+
+
+
+
+91.  select department_salary.pay_month, department_id,
+    case
+        when department_avg>company_avg then 'higher'
+        when department_avg<company_avg then 'lower'
+        else 'same'
+    end as comparison
+from
+    (
+      select department_id, avg(amount) as department_avg, date_format(pay_date, '%Y-%m') as pay_month
+      from salary join employee on salary.employee_id = employee.employee_id
+      group by department_id, pay_month
+    ) as department_salary
+join
+    (
+      select avg(amount) as company_avg,  date_format(pay_date, '%Y-%m') as pay_month 
+        from salary 
+        group by date_format(pay_date, '%Y-%m')
+    ) as company_salary
+on department_salary.pay_month = company_salary.pay_month
+
+
+
+
+92.    select t1.install_date as install_dt, count(t1.install_date) as installs,
+    round(count(t2.event_date) / count(*), 2) as Day1_retention
+from (
+    select player_id, min(event_date) as install_date
+    from Activity
+    group by 1
+) t1
+left join Activity t2 
+on date_add(t1.install_date, interval 1 day) = t2.event_date
+    and t1.player_id = t2.player_id
+group by 1
+order by 1
+
+
+93.  select group_id,player_id 
+from (
+    select sc.group_id group_id, sc.player_id player_id, 
+       rank() over (partition by sc.group_id order by sum(sc.score) desc, sc.player_id asc) as rnk 
+    from(
+        select p.group_id group_id,
+         p.player_id player_id ,
+         sum(m.first_score) as score
+        from players p
+        inner join matches m
+        on p.player_id = m.first_player
+        group by p.group_id,p.player_id
+        
+        union all
+        
+        select p.group_id group_id,
+         p.player_id player_id ,
+        sum(second_score) as score
+        from players p
+        inner join matches m
+        on p.player_id = m.second_player
+        group by p.group_id,p.player_id
+    ) sc
+    group by sc.group_id,sc.player_id
+) A 
+where rnk = 1
+
+
+
+
+94.   select distinct Student.*
+from Student inner join Exam
+on Student.student_id = Exam.student_id
+where student.student_id not in 
+    (select e1.student_id
+    from Exam as e1 inner join
+        (select exam_id, min(score) as min_score, max(score) as max_score
+        from Exam
+        group by exam_id) as e2
+    on e1.exam_id = e2.exam_id
+    where e1.score = e2.min_score or e1.score = e2.max_score)
+order by student_id
+
+
+
+
+
+98.select user_id, tweet_date ,
+round(avg(total_tweets) over(partition by user_id order by tweet_date asc
+rows between 2 preceding and current row),2) as rolling_avg_3d
+from (
+select user_id, tweet_date, count(*) total_tweets 
+from tweets group by user_id, tweet_date order by tweet_date asc
+) x    
+
+
+
+
+99.  WITH snaps_statistics AS (
+  SELECT 
+    age.age_bucket, 
+    SUM(CASE WHEN activities.activity_type = 'send' 
+      THEN activities.time_spent ELSE 0 END) AS send_timespent, 
+    SUM(CASE WHEN activities.activity_type = 'open' 
+      THEN activities.time_spent ELSE 0 END) AS open_timespent, 
+    SUM(activities.time_spent) AS total_timespent 
+  FROM activities
+ INNER JOIN age_breakdown AS age 
+    ON activities.user_id = age.user_id 
+  WHERE activities.activity_type IN ('send', 'open') 
+  GROUP BY age.age_bucket) 
+
+SELECT 
+  age_bucket, 
+  ROUND(100.0 * send_timespent / total_timespent, 2) AS send_perc, 
+  ROUND(100.0 * open_timespent / total_timespent, 2) AS open_perc 
+FROM snaps_statistics;
+
+
+
+
+
+     
